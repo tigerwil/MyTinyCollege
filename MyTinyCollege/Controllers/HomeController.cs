@@ -26,5 +26,13 @@ namespace MyTinyCollege.Controllers
 
             return View();
         }
+
+        //Test
+        public ActionResult Test()
+        {
+            return View();
+            //return Content("<h1>This is just a test</h1>");
+        }
+
     }
 }
