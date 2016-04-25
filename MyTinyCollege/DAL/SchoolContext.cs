@@ -21,9 +21,9 @@ namespace MyTinyCollege.DAL
 
         public DbSet<Course> Courses { get; set; }
 
-        //public DbSet<OfficeAssignment> OfficeAssignments { get; set; }
+        public DbSet<OfficeAssignment> OfficeAssignments { get; set; }
 
-        //public DbSet<Department> Departments { get; set; }
+        public DbSet<Department> Departments { get; set; }
 
         //Specifying singular table names
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -31,7 +31,7 @@ namespace MyTinyCollege.DAL
             //base.OnModelCreating(modelBuilder);
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
 
-            /*Using Fluent API
+            /* Using Fluent API
              * Take care of many-to-many relationships between instructor and course
              * entities.  EF Code First can configure this for us, but if we don't 
              * override the names we will get mappings such as 
