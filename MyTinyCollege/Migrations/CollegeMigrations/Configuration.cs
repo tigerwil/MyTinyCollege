@@ -76,21 +76,71 @@ namespace MyTinyCollege.Migrations.CollegeMigrations
             instructors.ForEach(s => context.Instructors.AddOrUpdate(p => p.Email, s));
             context.SaveChanges();
 
-            //3. Add some courses
+            //3. Add some departments
+            var departments = new List<Department>
+            {
+                new Department {Name="Engineering" , Budget=350000,
+                                StartDate=DateTime.Parse("2010-09-01"),
+                                InstructorID=1 },
+                new Department {Name="English" , Budget=150000,
+                                StartDate=DateTime.Parse("2010-09-01"),
+                                InstructorID=2 },
+            };
+            departments.ForEach(s => context.Departments.AddOrUpdate(p => p.Name, s));
+            context.SaveChanges();
+
+            //4. Add some courses
             var courses = new List<Course>
             {
-                new Course {CourseID =1045, Title="Chemistry",Credits=3},
-                new Course {CourseID =4022, Title="Physics",Credits=3},
-                new Course {CourseID =3141, Title="Calculus",Credits=3},
-                new Course {CourseID =2021, Title="Literature",Credits=3},
+                new Course {CourseID =1045, Title="Chemistry",Credits=3,DepartmentID=1},
+                new Course {CourseID =4022, Title="Physics",Credits=3,DepartmentID=1},
+                new Course {CourseID =3141, Title="Calculus",Credits=3,DepartmentID=1},
+                new Course {CourseID =2021, Title="Literature",Credits=3,DepartmentID=2},
             };
 
             courses.ForEach(s => context.Courses.AddOrUpdate(p => p.CourseID, s));
             context.SaveChanges();
-            //4. Add some enrollments
+
+            //5. Add some enrollments
+            var enrollments = new List<Enrollment>
+            {
+                new Enrollment {StudentID=1, CourseID=1045, Grade=Grade.A },
+                new Enrollment {StudentID=1, CourseID=4022, Grade=Grade.B },
+                new Enrollment {StudentID=2, CourseID=3141, Grade=Grade.C },
+                new Enrollment {StudentID=2, CourseID=1045, Grade=Grade.B },
+                new Enrollment {StudentID=3, CourseID=2021, Grade=Grade.B },
+                new Enrollment {StudentID=3, CourseID=3141, Grade=Grade.C }
+            };
+
+            foreach(Enrollment e in enrollments)
+            {
+                var enrollmentInDatabase = context.Enrollments.Where(
+                    s =>
+                    s.StudentID == e.StudentID &&
+                    s.course.CourseID == e.CourseID).SingleOrDefault();
+
+                //SingleOrDefault:  Returns a single, specific element of a sequence, 
+                //                 or a default value if no such element is found.
+                //Use when expecting 0 or 1 item 
+                //You get 0 when 0 or 1 was expected (ok)
+                //You get 1 when 0 or 1 was expected (ok)
+                //You get 2 or more when 0 or 1 was expected (error)
+
+                //Single:  Returns a single, specific element of a sequence
+                //Use when 1 item expected (not 0 or 2 and more)
+                //You get 0 when 1 was expected (error)
+                //You get 1 when 1 was expected (ok)
+                //You get 2 or more when 1 was expected (error)
+
+                if (enrollmentInDatabase == null)
+                {
+                    //enrollment was not found - add it to db context
+                    context.Enrollments.Add(e);
+                }
+            }//end of foreach
+            context.SaveChanges();
 
 
-
-        }
+        }//End of Seed Method
     }
 }

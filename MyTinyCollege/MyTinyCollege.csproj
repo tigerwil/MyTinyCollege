@@ -199,6 +199,7 @@
   <ItemGroup>
     <Content Include="Content\bootstrap - Copy.css" />
     <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min - Copy.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
