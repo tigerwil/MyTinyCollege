@@ -20,10 +20,12 @@
             @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FNameSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Email)
+            @*@Html.DisplayNameFor(model => model.Email)*@
+            @Html.ActionLink("Email", "Index", new { sortOrder = ViewBag.EmailSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.EnrollmentDate)
+            @*@Html.DisplayNameFor(model => model.EnrollmentDate)*@
+            @Html.ActionLink("Enrollment Date", "Index", new { sortOrder = ViewBag.DateSortParm })
         </th>
         <th></th>
     </tr>
@@ -37,7 +39,9 @@
             @Html.DisplayFor(modelItem => item.FirstName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Email)
+            @* mwilliams:remove mailto when using [DataType(DataType.EmailAddress)] in model
+                 @Html.DisplayFor(modelItem => item.Email)*@
+            @Html.DisplayTextFor(modelItem => item.Email)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.EnrollmentDate)

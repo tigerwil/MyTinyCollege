@@ -27,9 +27,10 @@ namespace MyTinyCollege.Controllers
 
             //Prepare sort order 
             ViewBag.CurrentSort = sortOrder;//get current sort from UI
-            ViewBag.FNameSortParm = string.IsNullOrEmpty(sortOrder) ? "fname_desc" : "";
             ViewBag.LNameSortParm = string.IsNullOrEmpty(sortOrder) ? "lname_desc" : "";
-            //ViewBag.DateSortParm = sortOrder
+            ViewBag.FNameSortParm = sortOrder=="fname" ? "fname_desc" : "fname";            
+            ViewBag.DateSortParm = sortOrder == "date" ? "date_desc" : "date";
+            ViewBag.EmailSortParm = sortOrder == "email" ? "email_desc" : "email";
 
             //Let's get our student data
             var students = from s in db.Students select s;
@@ -37,16 +38,41 @@ namespace MyTinyCollege.Controllers
             //Apply the sort order 
             switch (sortOrder)
             {
-                //LastName Desc
-                case "lname_desc":
-                    students = students.OrderByDescending(s => s.LastName);
+
+                //FirstName Asc
+                case "fname":
+                    students = students.OrderBy(s => s.FirstName);
                     break;
 
                 //FirstName Desc
                 case "fname_desc":
                     students = students.OrderByDescending(s => s.FirstName);
                     break;
-                
+
+                //EnrollmentDate Asc
+                case "date":
+                    students = students.OrderBy(s => s.EnrollmentDate);
+                    break;
+
+                //EnrollmentDate Desc
+                case "date_desc":
+                    students = students.OrderByDescending(s => s.EnrollmentDate);
+                    break;
+
+                //Email Asc
+                case "email":
+                    students = students.OrderBy(s => s.Email);
+                    break;
+
+                //Email Desc
+                case "email_desc":
+                    students = students.OrderByDescending(s => s.Email);
+                    break;
+                //LastName Desc
+                case "lname_desc":
+                    students = students.OrderByDescending(s => s.LastName);
+                    break;
+
                 //Default LastName Asc
                 default:
                     students = students.OrderBy(s => s.LastName);
