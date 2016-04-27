@@ -1,0 +1,5 @@
+Enable-Migrations -ContextTypeName MyTinyCollege.DAL.SchoolContext -MigrationsDirectory Migrations\CollegeMigrations
+
+add-migration -ConfigurationTypeName MyTinyCollege.Migrations.CollegeMigrations.Configuration "InitialCreate"
+
+update-database -ConfigurationTypeName MyTinyCollege.Migrations.CollegeMigrations.Configuration
