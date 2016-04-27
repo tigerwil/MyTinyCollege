@@ -9,6 +9,15 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+
+@* mwilliams:  added search functionality *@
+@using (Html.BeginForm("Index", "Student", FormMethod.Get))
+{
+    <p>
+        Find by name: @Html.TextBox("searchString")
+        <input type="submit" value="Search" class="btn btn-sm btn-default" />
+    </p>
+}
 <table class="table">
     <tr>
         <th>

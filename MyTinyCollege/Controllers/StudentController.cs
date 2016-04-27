@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using MyTinyCollege.DAL;
 using MyTinyCollege.Models;
+using PagedList;
 
 namespace MyTinyCollege.Controllers
 {
@@ -21,8 +22,8 @@ namespace MyTinyCollege.Controllers
         //    return View(db.Students.ToList());
         //}
 
-         //mwilliams:  adding sorting functionality
-        public ActionResult Index(string sortOrder)
+         //mwilliams:  adding sorting, filtering, and paging functionality
+        public ActionResult Index(string sortOrder, string searchString, string currentFilter, int? page)
         {
 
             //Prepare sort order 
@@ -32,8 +33,28 @@ namespace MyTinyCollege.Controllers
             ViewBag.DateSortParm = sortOrder == "date" ? "date_desc" : "date";
             ViewBag.EmailSortParm = sortOrder == "email" ? "email_desc" : "email";
 
+            //for filtering and paging
+            if(searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
             //Let's get our student data
             var students = from s in db.Students select s;
+
+            //check for filter (searchString)
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                //Apply filter on first and last name 
+                students = students.Where(s => s.LastName.Contains(searchString) ||
+                s.FirstName.Contains(searchString));
+            }
 
             //Apply the sort order 
             switch (sortOrder)
@@ -79,7 +100,17 @@ namespace MyTinyCollege.Controllers
                     break;
             }
             //return the students object as a enumerable (list)
-            return View(students.ToList());
+            //return View(students.ToList());
+
+            //Setup Pager
+            int pageSize = 3;  //start with page size of 3 for paging (how many records per page)
+            int pageNumber = (page ?? 1);
+            /* The two question marks represent the null-coalescing operator. 
+             * The null-coalescing operator defines a default value for a nullable type; 
+             * the expression (page ?? 1) means return the value of page if it has a value, 
+             * or return 1 if page is null
+             */
+            return View(students.ToPagedList(pageNumber, pageSize));
 
         }
 
