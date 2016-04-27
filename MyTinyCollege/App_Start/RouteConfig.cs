@@ -14,11 +14,11 @@ namespace MyTinyCollege
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             //mwilliams:  custom routes
             //Student/fname
-            routes.MapRoute(
-               name: "Student",
-               url: "Student/{sortOrder}",
-               defaults: new { controller = "Student", action = "Index", sortOrder=UrlParameter.Optional }
-            );
+            //routes.MapRoute(
+            //   name: "Student",
+            //   url: "Student/{sortOrder}",
+            //   defaults: new { controller = "Student", action = "Index", sortOrder=UrlParameter.Optional }
+            //);
 
             //end custom routes
             routes.MapRoute(
