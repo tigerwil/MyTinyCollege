@@ -52,8 +52,11 @@
                         @{
                             foreach (var course in item.Courses)
                             {
-                                @course.CourseID @: @course.Title<br />
-            }
+                                // @: to add plain text
+                                // <text> element to explicitly identify as content
+                                @course.CourseID@: : @course.Title<br />
+                                //<text> @course.CourseID: @course.Title</text><br />
+                            }
                         }
                     </td>
 
@@ -70,5 +73,62 @@
     </div>
 </div>
 
+@if (Model.Courses != null)
+{
+    //Only if instructors has assigned course(s)
+    <h3>Courses Taught by: @ViewBag.InstructorName</h3>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <table class="table">
+                <tr>
+                    <th></th>
+                    <th>Number</th>
+                    <th>Title</th>
+                    <th>Department</th>
+                </tr>
+                @foreach (var item in Model.Courses)
+                {
+                    //for selected row highlight
+                    string selectedRow = "";
+                    if (item.CourseID == ViewBag.CourseID)
+                    {
+                        selectedRow = "success";
+                    }
+                    <tr class="@selectedRow">
+                        <td>@Html.ActionLink("Select", "Index", new { courseID = item.CourseID })</td>
+                        <td>@item.CourseID</td>
+                        <td>@item.Title</td>
+                        <td>@item.Department.Name</td>
+                    </tr>
 
+
+                }
+
+            </table>
+        </div>
+    </div>
+}
+
+@if (Model.Enrollments != null)
+{
+    //Only if course has enrollments
+    <h3>Students enrolled in : @ViewBag.CourseTitle</h3>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <table class="table">
+                <tr>
+                    <th>Student Name</th>
+                    <th>Grade</th>
+                </tr>
+                @foreach (var item in Model.Enrollments)
+                {
+                    <tr>
+                        <td>@item.student.FullName</td>
+                        <td>@item.Grade</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+}
 
