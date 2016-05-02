@@ -46,6 +46,49 @@
                 @Html.ValidationMessageFor(model => model.HireDate, "", new { @class = "text-danger" })
             </div>
         </div>
+        @* mwilliams:  added office assignment *@
+        <div class="form-group">
+            @Html.LabelFor(model => model.OfficeAssignment.Location, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.OfficeAssignment.Location, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.OfficeAssignment.Location, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @* end office assignment *@
+        @* mwilliams: show assigned course data *@
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <table class="table table-condensed">
+                    @{
+                        int cnt = 0;
+                        List<MyTinyCollege.ViewModels.AssignedCourseData> courses = ViewBag.Courses;
+
+                        foreach (var course in courses)
+                        {
+                            @* mwilliams: Using @: to explicitly indicate the start of content
+                            in this case it will add a space
+
+                            *@
+                    if (cnt++ % 3 == 0)
+                    {
+                        @: <tr>
+            }
+                    @:<td style="border:none">
+                        <input type="checkbox"
+                               name="selectedCourses"
+                               value="@course.CourseID"
+                               @(Html.Raw(course.Assigned ? "checked=\"checked\"" : "")) />
+                        @course.CourseID @:  @course.Title
+                            @: </td>
+    }
+                        @:</tr>
+
+
+                    }
+                </table>
+            </div>
+        </div>
+        @* end assigned course data *@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

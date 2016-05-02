@@ -96,7 +96,11 @@ namespace MyTinyCollege.Controllers
         // GET: Instructor/Create
         public ActionResult Create()
         {
-            ViewBag.ID = new SelectList(db.OfficeAssignments, "InstructorID", "Location");
+            //ViewBag.ID = new SelectList(db.OfficeAssignments, "InstructorID", "Location");
+            //return View();
+            var instructor = new Instructor();
+            instructor.Courses = new List<Course>();
+            PopulateAssignedCourseData(instructor);
             return View();
         }
 
@@ -105,16 +109,24 @@ namespace MyTinyCollege.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,LastName,FirstName,Email,HireDate")] Instructor instructor)
+        public ActionResult Create([Bind(Include = "LastName,FirstName,Email,OfficeAssignment,HireDate")] Instructor instructor, string[] selectedCourses)
         {
+            if (selectedCourses != null)
+            {
+                instructor.Courses = new List<Course>();
+                foreach (var course in selectedCourses)
+                {
+                    var courseToAdd = db.Courses.Find(int.Parse(course));
+                    instructor.Courses.Add(courseToAdd);
+                }
+            }
             if (ModelState.IsValid)
             {
-                db.People.Add(instructor);
+                db.Instructors.Add(instructor);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
-            ViewBag.ID = new SelectList(db.OfficeAssignments, "InstructorID", "Location", instructor.ID);
+            PopulateAssignedCourseData(instructor);
             return View(instructor);
         }
 
@@ -178,17 +190,85 @@ namespace MyTinyCollege.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,LastName,FirstName,Email,HireDate")] Instructor instructor)
+        public ActionResult Edit(int? ID, string[] selectedCourses)
         {
-            if (ModelState.IsValid)
+            //Test for ID parameter passed in URL
+            if (ID == null)
             {
-                db.Entry(instructor).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ViewBag.ID = new SelectList(db.OfficeAssignments, "InstructorID", "Location", instructor.ID);
-            return View(instructor);
+
+            //Find the instructor to update
+            var instructorToUpdate = db.Instructors
+                .Include(i => i.OfficeAssignment)
+                .Include(c => c.Courses)
+                .Where(i => i.ID == ID)
+                .Single();
+
+            if(TryUpdateModel(instructorToUpdate, "",
+                new string[] {
+                "LastName", "FirstName", "HireDate", "OfficeAssignment","Email" }))
+            {
+                try
+                {
+                    //If officelocation is empty string - remove it from database table
+                    if (string.IsNullOrWhiteSpace(instructorToUpdate.OfficeAssignment.Location))
+                    {
+                        instructorToUpdate.OfficeAssignment = null; 
+                    }
+                    //Update instructor and assigned courses
+                    UpdateInstructorCourses(selectedCourses, instructorToUpdate);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (Exception)
+                {
+
+                    ModelState.AddModelError("", "Unable to save changes.  Try again later!");
+                }
+            }
+
+            //For Displaying selected courses checkbox within view
+            PopulateAssignedCourseData(instructorToUpdate);
+            return View(instructorToUpdate);
         }
+
+        private void UpdateInstructorCourses(string[] selectedCourses, Instructor instructorToUpdate)
+        {
+            if (selectedCourses == null)
+            {
+                instructorToUpdate.Courses = new List<Course>();
+                return;
+            }
+
+            var selectedCoursesHS = new HashSet<string>(selectedCourses);
+            var instructorCourses = new HashSet<int>
+                (instructorToUpdate.Courses.Select(c => c.CourseID));
+
+            //Loop all course in database
+            foreach (var course in db.Courses)
+            {
+                //Add a new course to instructor assignment
+                if ( selectedCoursesHS.Contains(course.CourseID.ToString() )  )
+                {
+                    if (!instructorCourses.Contains(course.CourseID))                        
+                    {
+                        instructorToUpdate.Courses.Add(course);
+                    }
+                }else
+                {
+
+                    //Remove existing course to instructor assignment
+                    if (instructorCourses.Contains(course.CourseID))
+                    {
+                        instructorToUpdate.Courses.Remove(course);
+                    }
+                }//end of if 
+
+
+            }//end of foreach
+
+        }//end of UpdateInstructorCourses
 
         // GET: Instructor/Delete/5
         public ActionResult Delete(int? id)
@@ -209,9 +289,40 @@ namespace MyTinyCollege.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
+            /*mwilliams: Modify Delete Post method to:
+             * - Delete the office assignment record (if any) when the instructor is deleted
+             * - Remove the instructor if they are assigned as an administrator of a department
+             * Without this code you would get a referential integrity error if you tried to delete 
+             * and instructor who was assigned as a course administrator
+             *
+             */
         {
-            Instructor instructor = db.Instructors.Find(id);
-            db.People.Remove(instructor);
+            //Instructor instructor = db.Instructors.Find(id);
+            //converted to Eager loading including the office assignment entity
+            Instructor instructor = db.Instructors
+                .Include(i => i.OfficeAssignment)
+                .Where(i => i.ID == id)
+                .Single();
+
+            //remove office assignment record for this instructor
+            instructor.OfficeAssignment = null;
+
+            //remove the instructor 
+            db.Instructors.Remove(instructor);
+
+            //Check to department assignemnt
+            var department = db.Departments
+                .Where(d => d.InstructorID == id)
+                .SingleOrDefault();
+            //Use single of default here because of possible null
+
+            if(department != null)
+            {
+                //remove the instructor id value (ie. 11) for this department
+                department.InstructorID = null;
+            }
+            //Save changes and redirect back to instructor list
+
             db.SaveChanges();
             return RedirectToAction("Index");
         }
