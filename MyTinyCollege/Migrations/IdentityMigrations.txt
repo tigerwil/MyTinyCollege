@@ -1,0 +1,5 @@
+enable-migrations -ContextTypeName MyTinyCollege.Models.ApplicationDbContext  -MigrationsDirectory Migrations\IdentityMigrations
+
+add-migration -ConfigurationTypeName MyTinyCollege.Migrations.IdentityMigrations.Configuration "InitialSeed" -IgnoreChanges
+
+update-database -ConfigurationTypeName MyTinyCollege.Migrations.IdentityMigrations.Configuration 
