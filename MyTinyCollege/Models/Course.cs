@@ -23,6 +23,7 @@ namespace MyTinyCollege.Models
         [StringLength(50, MinimumLength =3)]
         public string Title { get; set; }
 
+
         [Range(0,5)]//Credits can be between 0 and 5
         public int Credits { get; set; }
 
