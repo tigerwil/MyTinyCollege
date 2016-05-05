@@ -80,30 +80,45 @@ namespace MyTinyCollege.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Instructor instructor = db.Instructors.Find(id);
-            if (instructor == null)
+            Enrollment enrollment = db.Enrollments.Find(id);
+            if (enrollment == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.ID = new SelectList(db.OfficeAssignments, "InstructorID", "Location", instructor.ID);
-            return View(instructor);
+            return View(enrollment);
         }
 
         // POST: InstructorCourse/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,LastName,FirstName,Email,HireDate")] Instructor instructor)
+        public ActionResult EditPost(int? id, int? courseID)
         {
-            if (ModelState.IsValid)
+            if (id==null)
             {
-                db.Entry(instructor).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ViewBag.ID = new SelectList(db.OfficeAssignments, "InstructorID", "Location", instructor.ID);
-            return View(instructor);
+
+            var gradeToUpdate = db.Enrollments.Find(id);
+
+            if(TryUpdateModel(gradeToUpdate,"", new string[] { "Grade" }))
+            {
+                try
+                {
+                    db.SaveChanges();
+                    return RedirectToAction("Index", "InstructorCourse", new { courseID = courseID });
+                }
+                catch (Exception)
+                {
+
+                    ModelState.AddModelError("", "Unable to save changes.  Try again later!");
+                }
+            }
+
+
+
+            return View(gradeToUpdate);
+            
+
         }
 
 

@@ -44,7 +44,19 @@
                     <tr>
                         <td>@item.student.FullName</td>
                         <td>@Html.DisplayFor(modelItem=>item.Grade)</td>
-                        <td>Links go here</td>
+                        <td>
+                            @if (String.IsNullOrEmpty(item.Grade.ToString()))
+                            {
+                                <a href="@Url.Action("Edit","InstructorCourse",new {id=item.EnrollmentID, courseID=item.CourseID })" >Add Grade</a>
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Edit","InstructorCourse",new {id=item.EnrollmentID, courseID=item.CourseID })">Edit Grade</a>
+                                <span class="glyphicon glyphicon-edit"></span>
+
+                            }
+                        </td>
                     </tr>
                 }
             </table>
