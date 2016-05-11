@@ -8,9 +8,13 @@
  *
  * http://api.jqueryui.com/autocomplete/#theming
  */
+ul.ui-autocomplete{
+    list-style:none
+}
 .ui-autocomplete {
 	position: absolute;
 	top: 0;
 	left: 0;
 	cursor: default;
+    background-color:#dddddd;
 }
