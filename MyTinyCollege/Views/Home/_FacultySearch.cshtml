@@ -1,0 +1,14 @@
+﻿@model IEnumerable<MyTinyCollege.Models.Instructor>
+<div id="searchresults">
+    <ul>
+        @foreach (var item in Model)
+        {
+
+            <li>
+                <a href="@Url.Action("Details","Instructor",
+                            new { id = item.ID })">@item.FullName</a>
+            </li>
+
+        }
+    </ul>
+</div>

@@ -9,6 +9,43 @@
     <p><a href="@Url.Action("About", "Home")" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
 </div>
 
+@* mwilliams: Ajax Faculty Search *@
+<div class="panel panel-primary">
+    <div class="panel-heading">Faculty Search</div>
+    <div class="panel-body">
+        @using (Ajax.BeginForm("FacultySearch", "Home",
+
+            new AjaxOptions
+            {
+                InsertionMode = InsertionMode.Replace,
+                HttpMethod = "GET",
+                OnFailure = "searchFailed",
+                LoadingElementId = "ajax-loader",
+                UpdateTargetId = "searchresults",
+            }))
+        {
+            <div class="col-md-4">
+                <div class="form-inline">
+                    <input type="text" name="q" id="q"
+                           class="form-control input-sm"
+                           data-autocomplete-source="@Url.Action("QuickSearch","Home")" />
+                    <input type="submit" value="Search" id="search" name="search"
+                           class="btn btn-sm btn-default" />
+                </div>
+                <div style="padding-top:1em">
+                    <img id="ajax-loader" style="display:none"
+                         src="~/Content/images/ajax-loader.gif" />
+                </div>
+
+            </div>
+            <div id="searchresults" class="col-md-8"></div>
+        }
+    </div>
+</div>
+
+@* end mwilliams: Ajax Faculty Search *@
+
+
 <div class="row">
     <div class="col-md-4">
         <h2>Apply Now</h2>
@@ -40,7 +77,7 @@
 
 <div class="row">
     <h2>Faculties</h2>
-    @{ 
+    @{
         var action = (User.IsInRole("admin") ? "Index" : "Listing");
     }
 
@@ -56,3 +93,7 @@
         </div>
     }
 </div>
+@section Scripts {
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/App/CollegeScripts.js"></script>
+}
