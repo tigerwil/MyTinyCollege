@@ -264,6 +264,15 @@
     <Content Include="Content\themes\base\tabs.css" />
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
+    <Content Include="DeptPics\1.png" />
+    <Content Include="DeptPics\2.png" />
+    <Content Include="DeptPics\3.png" />
+    <Content Include="DeptPics\4.png" />
+    <Content Include="DeptPics\5.png" />
+    <Content Include="DeptPics\6.png" />
+    <Content Include="DeptPics\7.png" />
+    <Content Include="DeptPics\8.png" />
+    <Content Include="DeptPics\9.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -274,6 +283,7 @@
     <Content Include="Scripts\App\CollegeScripts.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Properties\PublishProfiles\MyTinyCollege.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -357,7 +367,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="DeptPics\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

@@ -10,38 +10,42 @@
 </div>
 
 @* mwilliams: Ajax Faculty Search *@
-<div class="panel panel-primary">
-    <div class="panel-heading">Faculty Search</div>
-    <div class="panel-body">
-        @using (Ajax.BeginForm("FacultySearch", "Home",
+@if (Request.IsAuthenticated && User.IsInRole("admin"))
+{
+    <div class="panel panel-primary">
+        <div class="panel-heading">Faculty Search</div>
+        <div class="panel-body">
+            @using (Ajax.BeginForm("FacultySearch", "Home",
 
-            new AjaxOptions
+                new AjaxOptions
+                {
+                    InsertionMode = InsertionMode.Replace,
+                    HttpMethod = "GET",
+                    OnFailure = "searchFailed",
+                    LoadingElementId = "ajax-loader",
+                    UpdateTargetId = "searchresults",
+                }))
             {
-                InsertionMode = InsertionMode.Replace,
-                HttpMethod = "GET",
-                OnFailure = "searchFailed",
-                LoadingElementId = "ajax-loader",
-                UpdateTargetId = "searchresults",
-            }))
-        {
-            <div class="col-md-4">
-                <div class="form-inline">
-                    <input type="text" name="q" id="q"
-                           class="form-control input-sm"
-                           data-autocomplete-source="@Url.Action("QuickSearch","Home")" />
-                    <input type="submit" value="Search" id="search" name="search"
-                           class="btn btn-sm btn-default" />
-                </div>
-                <div style="padding-top:1em">
-                    <img id="ajax-loader" style="display:none"
-                         src="~/Content/images/ajax-loader.gif" />
-                </div>
+                <div class="col-md-4">
+                    <div class="form-inline">
+                        <input type="text" name="q" id="q"
+                               class="form-control input-sm"
+                               data-autocomplete-source="@Url.Action("QuickSearch","Home")" />
+                        <input type="submit" value="Search" id="search" name="search"
+                               class="btn btn-sm btn-default" />
+                    </div>
+                    <div style="padding-top:1em">
+                        <img id="ajax-loader" style="display:none"
+                             src="~/Content/images/ajax-loader.gif" />
+                    </div>
 
-            </div>
-            <div id="searchresults" class="col-md-8"></div>
-        }
+                </div>
+                <div id="searchresults" class="col-md-8"></div>
+            }
+        </div>
     </div>
-</div>
+}
+
 
 @* end mwilliams: Ajax Faculty Search *@
 
